@@ -1,0 +1,88 @@
+---
+title: "Lecture_1"
+author: "Trinity SHI"
+date: "November 10 2025"
+output: 
+  rmarkdown::html_document:
+    toc: true
+  vignette: > 
+    %\\VignetteIndexEntry{R markdown}
+    %\\VignetteEngine{knitr::rmarkdown}
+    \usepackage[utf8]{inputenc}
+---
+
+
+##Dependencies
+
+This document depends on the following packages:
+```{r}
+library(devtools)
+library(knitr)
+```
+##Make the code pretty
+Set the color scheme and pch.
+```{r}
+# Color scheme inspired by the RSkittleBrewer package
+tropical = c('darkorange', 'dodgerblue', 'hotpink', 'limegreen', 'yellow')
+palette(tropical)
+par(pch = 19)
+```
+
+Line by line explanantion of the Code:
+1) c() -> As learnt from other projects as well, this function not only allows for rules such as replacing characters c( A = "T"), but also combining datas together to form a collective list/vector c(Lits_1, List2), which is very useful for creating data frames. 
+2) palette() -> It stores the colors that will be used for graphics, so now if I use plot() or ggplot2() the col argument in plotting functions(e.g., col=1 for the first color in the palette).
+3) par() -> Used to set the plotting character (symbol) for points in plots created using base R graphics functions.  In this case 19 is hollow circles. 
+
+But unfortunately, for R markdown files the pch won't propagate unless you do something that is a little bit messy. 
+```{r, echo = FALSE }
+knit_hooks$set(setPch = function(before, options, envir)
+{
+  if(before) par(pch = 19)
+})
+opts_chunk$set(setPch = TRUE)
+```
+
+The following will also be hid for future documents but keep in mind it shows how to set a default figure width and height, as well as setting plot margians.
+```{r, echo = FALSE}
+knitr::opts_chunk$set(fig.width = 5, fig.height = 5, size = "footnotesize", warning = FALSE, message = FALSE)
+
+knitr::opts_chunk$set(small.mar = function(before, option, envir)
+  {
+  if (before)
+  {
+    graphics :: par(mar = c(5,5,1.5,1))
+  }
+})
+```
+
+#Compiling Questions in Course:
+1. Try compiling this document using the “Knit HTML” button. What files are produced?
+      It knits to a html document.
+2. Edit the output to be “pdf_document” and recompile. What files are produced?
+      It knits to a pdf document.
+3. Edit the output to be “word_document” and recompile. What files are produced?
+      It knits to a word document.
+      
+##Naming Code Chunks
+Annotations for the header of the chunk:
+*The label “chunk1” after "r" in {} tells you which part of the code was running in case you have errors.
+*The label "echo = FALSE" will hide this chunk of code from the knit. 
+*The label "cache = TRUE" makes it so that the code won't take as long to compile the second time.  
+```{r, chunk1}
+x = rnorm(100)
+plot(x, col = 2)
+```
+*Using asterix gives you a bullet point.
+
+##Session Information
+It is very useful to record the session information when performing analyses so you can collaborate with yourself in the future.
+```{r, cache = TRUE}
+sessionInfo()
+```
+
+```{r, cache = TRUE}
+devtools :: session_info()
+```
+## Some Notes:
+* :: seems to follow a package name explicitly stating "I want to access THIS package for THIS function", I think its used to access package specific functions when multiple packages share the same name of a function.
+* knitr::opts_chunk$set() very useful to setup the default environment for graphs, so they share the same rules (margin, color, style, heading, etc)
