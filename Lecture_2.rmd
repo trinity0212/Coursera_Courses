@@ -1,0 +1,80 @@
+---
+title: "Lecture_2"
+author: "Trinity SHI"
+date: "November 10 2025"
+output: 
+  rmarkdown::html_document:
+    toc: true
+
+---
+## Dependencies
+This document depends on the following packages:
+```{r setup}
+library(devtools)
+library(Biobase)
+```
+#Load Data from the Web
+```{r, cache = TRUE }
+con = url("http://bowtie-bio.sourceforge.net/recount/ExpressionSets/bodymap_eset.RData")
+load(file = con)
+close(con)
+```
+Note that when assigning the url information to con, I didn't use <- arrows instead I used an equal sign. 
+
+##An Expression Set
+This kind of object in R contains the 3 tables:
+```{r}
+bm = bodymap.eset
+bm
+```
+1. ExpressionSet(lockedEnvironment) -> An object is of class ExpressionSet. And locked Environment means the internal data is protected from accidental modification. 
+2. PhenoData -> The sample annotation (one row per sample)
+3. assayData: 52580 features, 19 samples -> The core matrix: 52580 ROWS (Genes) x 19 COLUMNS (Samples)
+4. element names: exprs -> The stored matrix is called exprs which should mean expression values. 
+5. sampleNames -> The 19 sample IDs. Can access using sampleNames(bm)
+6. varLabels -> These are the columns in the sample (bm) metadata table. 
+7. featureData -> Describe each gene / feature measured. 
+8. featureNames -> The gene IDs. 
+9. fvarLabels -> The gene metadata table contains a column named gene
+
+#Table 1: The Genomics Data
+These are usually high dimensional measurements - a dataset with a large number of features or variables, where the number of features can even exceed the number of observations. In this case it is RNA-sequencing data. Each row is a gene and each column is a sample. 
+```{r}
+exp_data = exprs(bm)
+dim(exp_data)
+```
+This tells us there are 52580 rows and 19 columns in the matrix. 
+```{r}
+head(exp_data, n = 5)
+```
+
+The head() allows you to look at the top few rows, which in this case n = 5, so we are looking at the top 5 rows in the dataset. 
+
+##Table 2: The Phenotype Data
+This is the "meta data" or "phenotype data" that is what you typically associate the genomic data with, the phenotype of the samples (Documentation of their gender, age, etc). Each column is a variable and each row is a sample. 
+```{r}
+pheno_data = pData(bm)
+dim(pheno_data)
+```
+This tells us that the phenotype data matrix has 19 rows and 6 columns. 
+
+```{r}
+head(pheno_data, n = 4)
+```
+This table tells you more information about the first few rows, so as you can see I see information about the gene sample (tissue type, gender, age, race, etc.)
+
+##Table 3: The Feature Data
+This is the information about the genes or other genomic features you are measuring. Each column is a variable and each row is a gene/feature. 
+```{r}
+feat_data = fData(bm)
+dim(fData(bodymap.eset))
+fData(bodymap.eset)[1:10,,1]
+```
+These are Ensembl Gene IDs. Every row corresponds to one gene, matching the rows of the expression matrix.
+
+##Session Information
+Here is the session information:
+```{r}
+devtools::session_info()
+```
+
